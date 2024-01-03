@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      Morphy
       Morphy.DAWG
   other-modules:
       Paths_morph_dawg

@@ -4,7 +4,11 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE InstanceSigs #-}
 
-module Morphy.DAWG where
+module Morphy
+    ( morphParse
+    , word
+    , Parse
+    ) where
 
 import qualified Data.Text as T
 import Prelude.Compat
@@ -54,8 +58,3 @@ morphParse word = [
   Parse {word=word, tag=S.fromList [NOUN], normalForm=word, score=1.0}
   , Parse {word=word, tag=S.fromList [NOUN], normalForm=word, score=0.5}
   ]
-
--- Test like function
-
-someFunc :: [Parse]
-someFunc = morphParse $ T.pack "стали"

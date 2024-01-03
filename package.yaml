@@ -39,6 +39,7 @@ ghc-options:
 library:
   source-dirs: src
   exposed-modules:
+    - Morphy
     - Morphy.DAWG
 
 executables:
