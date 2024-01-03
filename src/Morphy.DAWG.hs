@@ -4,7 +4,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE InstanceSigs #-}
 
-module Lib
+module Morphy.DAWG
     ( someFunc
     , morphParse
     , word

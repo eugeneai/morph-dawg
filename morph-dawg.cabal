@@ -24,8 +24,6 @@ source-repository head
   location: https://github.com/eugeneai/morph-dawg
 
 library
-  exposed-modules:
-      Lib
   other-modules:
       Paths_morph_dawg
   autogen-modules:
