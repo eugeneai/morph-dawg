@@ -24,6 +24,8 @@ source-repository head
   location: https://github.com/eugeneai/morph-dawg
 
 library
+  exposed-modules:
+      Morphy.DAWG
   other-modules:
       Paths_morph_dawg
   autogen-modules:
@@ -35,7 +37,7 @@ library
       base >=4.7 && <5
     , base-compat
     , containers
-    , text >=2.0.2 && <3
+    , text >=2.0.0 && <3
   default-language: Haskell2010
 
 executable morph-dawg-exe
@@ -52,7 +54,7 @@ executable morph-dawg-exe
     , base-compat
     , containers
     , morph-dawg
-    , text >=2.0.2 && <3
+    , text >=2.0.0 && <3
   default-language: Haskell2010
 
 test-suite morph-dawg-test
@@ -70,5 +72,5 @@ test-suite morph-dawg-test
     , base-compat
     , containers
     , morph-dawg
-    , text >=2.0.2 && <3
+    , text >=2.0.0 && <3
   default-language: Haskell2010

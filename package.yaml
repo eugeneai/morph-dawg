@@ -38,6 +38,8 @@ ghc-options:
 
 library:
   source-dirs: src
+  exposed-modules:
+    - Morphy.DAWG
 
 executables:
   morph-dawg-exe:
