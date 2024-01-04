@@ -28,6 +28,7 @@ library
       Morphy
       Morphy.DAWG
   other-modules:
+      Morphy.DAWGDict
       Paths_morph_dawg
   autogen-modules:
       Paths_morph_dawg
