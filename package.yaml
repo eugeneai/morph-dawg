@@ -55,11 +55,16 @@ library:
   cxx-sources:
     - src/Morphy/*.cc
   cxx-options:
-    - -Ilib
     - -std=c++17
-  ld-options:
-    - -lstdc++
 
+include-dirs:
+    - lib
+
+data-files:
+    - corpora/**/*
+
+extra-libraries:
+    - stdc++
 
 executables:
   morph-dawg-exe:

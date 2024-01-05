@@ -53,6 +53,29 @@ extra-source-files:
     lib/AUTHORS
     lib/COPYING
     lib/dawgdic-find.cc
+data-files:
+    corpora/ru/grammemes.json
+    corpora/ru/gramtab-opencorpora-ext.json
+    corpora/ru/gramtab-opencorpora-int.json
+    corpora/ru/meta.json
+    corpora/ru/p_t_given_w.intdawg
+    corpora/ru/paradigms.array
+    corpora/ru/prediction-suffixes-0.dawg
+    corpora/ru/prediction-suffixes-1.dawg
+    corpora/ru/prediction-suffixes-2.dawg
+    corpora/ru/suffixes.json
+    corpora/ru/words.dawg
+    corpora/uk/grammemes.json
+    corpora/uk/gramtab-opencorpora-ext.json
+    corpora/uk/gramtab-opencorpora-int.json
+    corpora/uk/meta.json
+    corpora/uk/paradigms.array
+    corpora/uk/prediction-suffixes-0.dawg
+    corpora/uk/prediction-suffixes-1.dawg
+    corpora/uk/prediction-suffixes-2.dawg
+    corpora/uk/prediction-suffixes-3.dawg
+    corpora/uk/suffixes.json
+    corpora/uk/words.dawg
 
 source-repository head
   type: git
@@ -67,12 +90,15 @@ library
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
-  cxx-options: -Ilib -std=c++17
+  cxx-options: -std=c++17
+  include-dirs:
+      lib
   cxx-sources:
       src/Morphy/hsdawgdic.cc
   extra-lib-dirs:
       /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
-  ld-options: -lstdc++
+  extra-libraries:
+      stdc++
   build-depends:
       base >=4.7 && <5
     , base-compat
@@ -85,8 +111,12 @@ executable morph-dawg-exe
   hs-source-dirs:
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  include-dirs:
+      lib
   extra-lib-dirs:
       /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
+  extra-libraries:
+      stdc++
   build-depends:
       base >=4.7 && <5
     , base-compat
@@ -101,8 +131,12 @@ test-suite morph-dawg-test
   hs-source-dirs:
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  include-dirs:
+      lib
   extra-lib-dirs:
       /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
+  extra-libraries:
+      stdc++
   build-depends:
       base >=4.7 && <5
     , base-compat

@@ -7,11 +7,11 @@ import qualified Data.Text as T
 -- Test like function
 
 testVal :: [Parse]
-testVal = morphParse $ T.pack " стали"
+testVal = morphParse $ T.pack "стали"
 
 
 main :: IO ()
 main = do
-  let dawg = fromFile "/tmp/nofile"
+  let dawg = fromFile "corpora/ru/words.dawg"
   putStrLn $ show dawg
   putStrLn $ show testVal
