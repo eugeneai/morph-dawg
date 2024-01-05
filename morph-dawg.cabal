@@ -18,7 +18,6 @@ build-type:     Simple
 extra-source-files:
     README.md
     CHANGELOG.md
-    src/Morphy/hsdawgdic.cc
     src/Morphy/hsdawgdic.h
     lib/b64/AUTHORS
     lib/b64/cdecode.c
@@ -68,6 +67,9 @@ library
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  cxx-options: -Ilib -std=c++17
+  cxx-sources:
+      src/Morphy/hsdawgdic.cc
   extra-lib-dirs:
       /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
   build-depends:

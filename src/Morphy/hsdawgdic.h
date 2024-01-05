@@ -1,18 +1,18 @@
 #ifndef __HS_DAWGDICT__
 #define __HS_DAWGDICT__
 
-#include <dictionary.h>
+namespace dawgdic {
+  class Dictionary;
+}
+
+#include "dawgdic/dictionary.h"
 #include "stdio.h"
 
-#ifdef _cplusplus_
-extern "C" {
-#endif
+namespace dawgdic {
 
-  dawgdic::Dictionary * newDictionary();
-  void freeDictionary(dawgdic::Dictionary * dict);
+  extern "C" Dictionary * newDictionary();
+  extern "C" void freeDictionary(Dictionary * dict);
 
-#ifdef _cplusplus_
 }
-#endif
 
 #endif // __HS_DAWGDICT__

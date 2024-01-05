@@ -10,7 +10,6 @@ spec-version:        0.36.0
 extra-source-files:
 - README.md
 - CHANGELOG.md
-- src/Morphy/*.cc
 - src/Morphy/*.h
 - lib/b64/*
 - lib/dawgdic/*
@@ -53,6 +52,12 @@ library:
   exposed-modules:
     - Morphy
     - Morphy.DAWG
+  cxx-sources:
+    - src/Morphy/*.cc
+  cxx-options:
+    - -Ilib
+    - -std=c++17
+
 
 executables:
   morph-dawg-exe:

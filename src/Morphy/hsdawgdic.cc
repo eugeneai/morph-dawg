@@ -1,4 +1,12 @@
 #include "hsdawgdic.h"
+#include <dictionary.h>
 
-dawgdic::Dictionary * newDictionary() { printf("Creating Dict\n") ; return new dawgdic::Dictionary(); }
-void freeDictionary(dawgdic::Dictionary * dict) { printf("Releasing Dict\n") ; delete dict; }
+namespace dawgdic {
+
+  Dictionary * newDictionary() { printf("Creating Dict\n") ; return new Dictionary(); }
+  void freeDictionary(Dictionary * dict) { printf("Releasing Dict\n") ; delete dict; }
+
+}
+#ifndef __cplusplus
+#error Must be compiled with g++
+#endif
