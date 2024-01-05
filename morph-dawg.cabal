@@ -18,6 +18,42 @@ build-type:     Simple
 extra-source-files:
     README.md
     CHANGELOG.md
+    src/Morphy/hsdawgdic.cc
+    src/Morphy/hsdawgdic.h
+    lib/b64/AUTHORS
+    lib/b64/cdecode.c
+    lib/b64/cdecode.h
+    lib/b64/cencode.c
+    lib/b64/cencode.h
+    lib/b64/decode.h
+    lib/b64/encode.h
+    lib/b64/LICENSE
+    lib/dawgdic/base-types.h
+    lib/dawgdic/base-unit.h
+    lib/dawgdic/bit-pool.h
+    lib/dawgdic/completer.h
+    lib/dawgdic/dawg-builder.h
+    lib/dawgdic/dawg-unit.h
+    lib/dawgdic/dawg.h
+    lib/dawgdic/dictionary-builder.h
+    lib/dawgdic/dictionary-extra-unit.h
+    lib/dawgdic/dictionary-unit.h
+    lib/dawgdic/dictionary.h
+    lib/dawgdic/guide-builder.h
+    lib/dawgdic/guide-unit.h
+    lib/dawgdic/guide.h
+    lib/dawgdic/link-table.h
+    lib/dawgdic/object-pool.h
+    lib/dawgdic/ranked-completer-candidate.h
+    lib/dawgdic/ranked-completer-node.h
+    lib/dawgdic/ranked-completer.h
+    lib/dawgdic/ranked-guide-builder.h
+    lib/dawgdic/ranked-guide-link.h
+    lib/dawgdic/ranked-guide-unit.h
+    lib/dawgdic/ranked-guide.h
+    lib/AUTHORS
+    lib/COPYING
+    lib/dawgdic-find.cc
 
 source-repository head
   type: git
@@ -29,12 +65,11 @@ library
       Morphy.DAWG
   other-modules:
       Morphy.DAWGDict
-      Paths_morph_dawg
-  autogen-modules:
-      Paths_morph_dawg
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  extra-lib-dirs:
+      /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
   build-depends:
       base >=4.7 && <5
     , base-compat
@@ -44,13 +79,11 @@ library
 
 executable morph-dawg-exe
   main-is: Main.hs
-  other-modules:
-      Paths_morph_dawg
-  autogen-modules:
-      Paths_morph_dawg
   hs-source-dirs:
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  extra-lib-dirs:
+      /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
   build-depends:
       base >=4.7 && <5
     , base-compat
@@ -62,13 +95,11 @@ executable morph-dawg-exe
 test-suite morph-dawg-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
-  other-modules:
-      Paths_morph_dawg
-  autogen-modules:
-      Paths_morph_dawg
   hs-source-dirs:
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  extra-lib-dirs:
+      /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
   build-depends:
       base >=4.7 && <5
     , base-compat

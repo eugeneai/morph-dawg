@@ -8,11 +8,11 @@
 extern "C" {
 #endif
 
-Dictionary * newDictionary() { printf("Creating Dict\n") ; return new Dictionary() }
-void freeDictionary(Dictionary * dict) { printf("Releasing Dict\n") ; delete dict; }
+  dawgdic::Dictionary * newDictionary();
+  void freeDictionary(dawgdic::Dictionary * dict);
 
 #ifdef _cplusplus_
 }
-#edif
+#endif
 
 #endif // __HS_DAWGDICT__

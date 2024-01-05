@@ -5,10 +5,22 @@ license:             BSD-3-Clause
 author:              "Evgeny Cherkashin"
 maintainer:          "eugeneai@irnok.net"
 copyright:           "2024 Evgeny Cherkashin"
+spec-version:        0.36.0
 
 extra-source-files:
 - README.md
 - CHANGELOG.md
+- src/Morphy/*.cc
+- src/Morphy/*.h
+- lib/b64/*
+- lib/dawgdic/*
+- lib/AUTHORS
+- lib/COPYING
+- lib/*.cc
+
+extra-lib-dirs:
+- /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
+
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
