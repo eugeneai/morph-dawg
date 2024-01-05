@@ -57,6 +57,8 @@ library:
   cxx-options:
     - -Ilib
     - -std=c++17
+  ld-options:
+    - -lstdc++
 
 
 executables:

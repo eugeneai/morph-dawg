@@ -72,6 +72,7 @@ library
       src/Morphy/hsdawgdic.cc
   extra-lib-dirs:
       /home/eugeneai/projects/code/haskell/morph-dawg/src/Morphy
+  ld-options: -lstdc++
   build-depends:
       base >=4.7 && <5
     , base-compat

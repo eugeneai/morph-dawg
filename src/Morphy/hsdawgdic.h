@@ -1,18 +1,12 @@
 #ifndef __HS_DAWGDICT__
 #define __HS_DAWGDICT__
 
-namespace dawgdic {
-  class Dictionary;
-}
-
 #include "dawgdic/dictionary.h"
-#include "stdio.h"
 
-namespace dawgdic {
+using namespace dawgdic;
 
-  extern "C" Dictionary * newDictionary();
-  extern "C" void freeDictionary(Dictionary * dict);
-
-}
+extern "C" Dictionary * newDictionary();
+extern "C" void freeDictionary(Dictionary * dict);
+extern "C" bool readDictionaryFromFile(Dictionary * dict, char * fileName);
 
 #endif // __HS_DAWGDICT__

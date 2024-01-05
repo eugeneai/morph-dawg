@@ -42,7 +42,7 @@ import Data.Set as S
 import Morphy.DAWGDict (
   Dictionary
   , newDictionary
-  -- , freeDictionary
+  , readDictionaryFromFile
   )
 
 import System.IO.Unsafe (unsafePerformIO)
@@ -84,6 +84,7 @@ morphParse word = [
   ]
 
 newtype DAWG = DAWG { dict::Dictionary }
+  deriving Show
 
 fromFile :: String -> DAWG
 fromFile fn = unsafePerformIO $ createAndOpen fn
@@ -91,7 +92,7 @@ fromFile fn = unsafePerformIO $ createAndOpen fn
     createAndOpen :: String -> IO DAWG
     createAndOpen fn = do
       dict <- newDictionary
-      -- TODO load dictionary from file named fn
+      readDictionaryFromFile dict fn
       return . DAWG $ dict
 
 
