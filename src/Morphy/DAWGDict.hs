@@ -3,32 +3,35 @@
 module Morphy.DAWGDict
   ( Dictionary
   , newDictionary
-  , freeDictionary
+  -- , freeDictionary
   )
   where
 
-import Foreign.Ptr (Ptr)
+import Foreign.Ptr (Ptr, FunPtr, nullPtr)
+import Foreign.ForeignPtr (ForeignPtr, newForeignPtr)
 
 data DictionaryClass
 
-type DictionaryPtr = Ptr DictionaryClass
-
-newtype Dictionary = Dictionary {unDict :: DictionaryPtr}
+newtype Dictionary = Dictionary {unDict :: ForeignPtr DictionaryClass}
 
 -- #include <dawgdic/completer.h>
 -- #include <dawgdic/dictionary.h>
 -- #include <hsdawgdic.h>
 -- #include <dawgdic/ranked-completer.h>
 
-foreign import ccall unsafe "hsdawgdic.h newDictionary" _newDictionary :: IO DictionaryPtr
-foreign import ccall unsafe "hsdawgdic.h freeDictionary" _freeDictionary :: DictionaryPtr -> IO ()
+foreign import ccall unsafe "hsdawgdic.h newDictionary"
+   _newDictionary :: IO (Ptr DictionaryClass)
+foreign import ccall unsafe "hsdawgdic.h &freeDictionary"
+   _freeDictionary :: FunPtr(Ptr DictionaryClass -> IO ())
 
 newDictionary :: IO Dictionary
 newDictionary = do
   dict <- _newDictionary
-  return . Dictionary $ dict
+  if dict == nullPtr then
+    error "newDictionary returned NULL."
+    else fmap Dictionary $ newForeignPtr _freeDictionary dict
 
-freeDictionary :: Dictionary -> IO ()
-freeDictionary dict = do
-  _freeDictionary $ unDict dict
-  return ()
+-- freeDictionary :: Dictionary -> IO ()
+-- freeDictionary dict = do
+--   _freeDictionary $ unDict dict
+--   return ()

@@ -8,7 +8,7 @@ module Morphy.DAWG
   (
     DAWG
   , fromFile
-  , freeDawg
+  -- , freeDawg
   ) where
 
 import qualified Data.Text as T
@@ -42,7 +42,7 @@ import Data.Set as S
 import Morphy.DAWGDict (
   Dictionary
   , newDictionary
-  , freeDictionary
+  -- , freeDictionary
   )
 
 import System.IO.Unsafe (unsafePerformIO)
@@ -95,10 +95,10 @@ fromFile fn = unsafePerformIO $ createAndOpen fn
       return . DAWG $ dict
 
 
-freeDawg :: DAWG -> IO ()
-freeDawg dawg = do
-  freeDictionary . dict $ dawg
-  return ()
+-- freeDawg :: DAWG -> IO ()
+-- freeDawg dawg = do
+--   freeDictionary . dict $ dawg
+--   return ()
 
 -- Test like function
 
