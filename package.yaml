@@ -35,6 +35,9 @@ dependencies:
 - text >= 2.0.0 && < 3
 - base-compat
 - containers
+- bytestring
+- utf8-string
+- with-utf8
 
 ghc-options:
 - -Wall

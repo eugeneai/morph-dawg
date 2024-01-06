@@ -6,6 +6,9 @@
 
 using namespace dawgdic;
 
+
+
+
 Dictionary * newDictionary() {
   std::cout<<"Creating Dict\n";
   return new Dictionary();
@@ -13,6 +16,7 @@ Dictionary * newDictionary() {
 
 void freeDictionary(Dictionary * dict) {
   std::cout<<"Releasing Dict\n";
+  dict->Clear();
   delete dict;
 }
 
@@ -28,6 +32,13 @@ bool readDictionaryFromFile(Dictionary * dic, char * fileName) {
   }
   std::cerr << "FATAL: Cannot open '" << fileName << "' file.\n";
   return false;
+}
+
+bool followDictionary(Dictionary * dict, char * s, BaseType * index) {
+  std::cout<<"Following Dict - '" << s << "' index: " << (*index) << std::endl;
+  bool rc = dict->Follow(s, index);
+  std::cout<<"Following Dict + " << rc << " new index: " << (*index) << std::endl;
+  return rc;
 }
 
 #ifndef __cplusplus

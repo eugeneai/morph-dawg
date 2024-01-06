@@ -8,6 +8,8 @@ module Morphy.DAWG
   (
     DAWG
   , fromFile
+  , follow
+  , putTuplesLn
   -- , freeDawg
   ) where
 
@@ -36,6 +38,10 @@ import Prelude.Compat
       (/=),
       (||),
       IO,
+      putStr,
+      putStrLn,
+      fst,
+      snd,
       return)
 import Data.String
 import Data.Set as S
@@ -43,6 +49,7 @@ import Morphy.DAWGDict (
   Dictionary
   , newDictionary
   , readDictionaryFromFile
+  , followDictionary
   )
 
 import System.IO.Unsafe (unsafePerformIO)
@@ -73,9 +80,14 @@ data Parse = Parse
   -- , methodStack ::
   } deriving (Eq)
 
+data IntTuple a = IntTuple {key::String, val::Maybe a} deriving Eq
+
+instance (Show a) => Show (IntTuple a) where
+  show t = "{" ++ key t ++ "=>" ++ (show . val $ t) ++ "}"
+
 instance Show Parse where
-  show p = "{" ++ ((T.unpack . word) p) ++ ":" ++ ((T.unpack . normalForm) p) ++
-    ((show . S.toList . tag) p) ++ ((show . score) p) ++ "}"
+  show p = "{" ++ (T.unpack . word $ p) ++ ":" ++ (T.unpack . normalForm $ p) ++
+    (show . S.toList . tag $ p) ++ (show . score $ p) ++ "}"
 
 morphParse :: T.Text -> [Parse]
 morphParse word = [
@@ -94,6 +106,31 @@ fromFile fn = unsafePerformIO $ createAndOpen fn
       dict <- newDictionary
       readDictionaryFromFile dict fn
       return . DAWG $ dict
+
+follow :: DAWG -> String -> Int -> [(String, Maybe Int)]
+follow dawg str index =
+  let d = dict dawg
+  in
+    [(str, followDictionary d str index)]
+
+putTuplesLn :: [(String, Maybe Int)] -> IO ()
+putTuplesLn xs = do
+  putStr "["
+  putTuples' xs
+  putStr "]\n"
+  where
+    putTuples' [] = return ()
+    putTuples' [x] = do
+      pt x
+    putTuples' (x:y:xs) = do
+      pt x
+      putStr ", "
+      putTuples' (y:xs)
+    pt x = do
+      putStr . fst $ x
+      putStr "=>"
+      putStr . show . snd $ x
+
 
 
 -- freeDawg :: DAWG -> IO ()
