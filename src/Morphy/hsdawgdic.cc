@@ -51,24 +51,32 @@ bool followDictionary(Dict * dict, char * s, BaseType * index) {
 }
 
 void startCompleter(Dict * dict, BaseType index) {
+  std::cout<<"Start Comp - index: " << index << std::endl;
   dict->comp->Start(index);
 }
 
 bool nextCompleter(Dict * dict) {
-  return dict->comp->Next();
+  auto rc = dict->comp->Next();
+  std::cout<<"Next Comp + bool: " << rc << std::endl;
+  return rc;
 }
 
 void keyCompleter(Dict * dict, char * s, BaseType maxSize) {
   const char * k = dict->comp->key();
+  std::cout<<"Key Comp + key: " << k << std::endl;
   strncpy(s, k, maxSize);
 }
 
 SizeType lengthCompleter(Dict * dict) {
-  return dict->comp->length();
+  auto l = dict->comp->length();
+  std::cout<<"Length Comp + length: " << l << std::endl;
+  return l;
 }
 
 ValueType valueCompleter(Dict * dict) {
-  return dict->comp->value();
+  ValueType v = dict->comp->value();
+  std::cout<<"Value Comp + value: " << v << std::endl;
+  return v;
 }
 
 #ifndef __cplusplus
