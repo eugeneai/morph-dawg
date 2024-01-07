@@ -14,8 +14,8 @@ Dict * newDictionary() {
   dict->dict = new Dictionary();
   dict->guide = new Guide();
   dict->comp = new Completer();
-  dict->comp->set_dic(dict->dic);
-  dict->comp->set_guide(dict->guide);
+  dict->comp->set_dic(*(dict->dict));
+  dict->comp->set_guide(*(dict->guide));
   return dict;
 }
 
@@ -58,8 +58,9 @@ bool nextCompleter(Dict * dict) {
   return dict->comp->Next();
 }
 
-const char * keyCompleter(Dict * dict) {
-  return dict->comp->key();
+void keyCompleter(Dict * dict, char * s, BaseType maxSize) {
+  const char * k = dict->comp->key();
+  strncpy(s, k, maxSize);
 }
 
 SizeType lengthCompleter(Dict * dict) {

@@ -40,9 +40,9 @@ foreign import ccall unsafe "hsdawgdic.h followDictionary"
 foreign import ccall unsafe "hsdawgdic.h startCompleter"
    _startCompleter :: Ptr DictionaryClass -> Int -> IO ()
 foreign import ccall unsafe "hsdawgdic.h nextCompleter"
-   _nextCompleter :: Ptr DictionaryClass -> IO ()
+   _nextCompleter :: Ptr DictionaryClass -> IO (Int)
 foreign import ccall unsafe "hsdawgdic.h keyCompleter"
-   _keyCompleter :: Ptr DictionaryClass -> IO (CString)
+   _keyCompleter :: Ptr DictionaryClass -> CString -> Int -> IO ()
 foreign import ccall unsafe "hsdawgdic.h lengthCompleter"
    _lengthCompleter :: Ptr DictionaryClass -> IO (Int)
 foreign import ccall unsafe "hsdawgdic.h valueCompleter"
@@ -92,28 +92,44 @@ followDictionary' dict str index = do
 followDictionary :: Dictionary -> String -> Int -> Maybe Int
 followDictionary dict str index = unsafePerformIO $ followDictionary' dict str index
 
-valueDictionary' :: Dictionary -> Int -> IO (Maybe BLU.ByteString)
+valueDictionary'' :: Ptr DictionaryClass -> Int -> CString -> Int -> IO [(String, Int)]
+valueDictionary'' dictPtr index strPtr strSize = do
+  _startCompleter dictPtr index
+  go
+  where
+    go :: IO ([(String, Int)])
+    go = do
+      rc <- _nextCompleter dictPtr
+      if rc /= (0::Int)
+        then do
+          _keyCompleter dictPtr strPtr strSize
+          len <- _lengthCompleter dictPtr
+          str <- GF.peekCStringLen utf8 (strPtr, len)
+          val <- _valueCompleter dictPtr
+          let x = (str, val)
+          xs <- go
+          return (x:xs)
+        else
+          return []
+
+
+
+valueDictionary' :: Dictionary -> Int -> IO [(String, Int)]
 valueDictionary' dict index = do
   withDictionaryPtr dict
     (\dictPtr ->
         go dictPtr index)
   where
-    go :: Ptr DictionaryClass -> Int -> IO (Maybe BLU.ByteString)
     go dictPtr index = do
       let maxSize = 2048
       allocaBytes maxSize
         (\ptr -> do
-            rc <- _valueDictionary dictPtr index ptr maxSize
-            if rc /= 0
-              then do
-                val <- peekCString ptr
-                return . Just . BLU.fromString $ val
-              else return Nothing)
+            valueDictionary'' dictPtr index ptr maxSize)
 
 
 -- return . Just . BLU.fromString $
 
-valueDictionary :: Dictionary -> Int -> Maybe BLU.ByteString
+valueDictionary :: Dictionary -> Int -> [(String, Int)]
 valueDictionary dict index = unsafePerformIO $ valueDictionary' dict index
 
 

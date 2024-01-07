@@ -11,7 +11,7 @@ struct Dict {
   Dictionary * dict;
   Guide * guide;
   Completer * comp;
-}
+};
 
 extern "C" Dict * newDictionary();
 extern "C" void freeDictionary(Dict * dict);
@@ -21,7 +21,7 @@ extern "C" bool valueDictionary(Dict * dict, BaseType index, char * buf, BaseTyp
 
 extern "C" void startCompleter(Dict * dict, BaseType index);
 extern "C" bool nextCompleter(Dict * dict);
-extern "C" const char * keyCompleter(Dict * dict);
+extern "C" void keyCompleter(Dict * dict, char * s, BaseType maxSize);
 extern "C" SizeType lengthCompleter(Dict * dict);
 extern "C" ValueType valueCompleter(Dict * dict);
 
