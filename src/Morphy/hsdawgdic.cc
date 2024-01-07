@@ -3,29 +3,38 @@
 
 #include <iostream>     // std::ios, std::istream, std::cout
 #include <fstream>      // std::filebuf
+#include <string.h>
 
 using namespace dawgdic;
 
 
-
-
-Dictionary * newDictionary() {
+Dict * newDictionary() {
   std::cout<<"Creating Dict\n";
-  return new Dictionary();
+  Dict * dict = new Dict();
+  dict->dict = new Dictionary();
+  dict->guide = new Guide();
+  dict->comp = new Completer();
+  dict->comp->set_dic(dict->dic);
+  dict->comp->set_guide(dict->guide);
+  return dict;
 }
 
-void freeDictionary(Dictionary * dict) {
+void freeDictionary(Dict * dict) {
   std::cout<<"Releasing Dict\n";
-  dict->Clear();
+  dict->guide->Clear();
+  dict->dict->Clear();
+  delete dict->comp;
+  delete dict->guide;
+  delete dict->dict;
   delete dict;
 }
 
-bool readDictionaryFromFile(Dictionary * dic, char * fileName) {
+bool readDictionaryFromFile(Dict * dict, char * fileName) {
   std::filebuf fb;
   if (fb.open(fileName, std::ios::in)) {
     std::istream input(&fb);
     std::cerr << "Info: Opened '" << fileName << "' file.\n";
-    bool rc = dic->Read(&input);
+    bool rc = dict->dict->Read(&input);
     fb.close();
     if (rc) std::cerr << "Info: Read successfully '" << fileName << "' file.\n";
     return rc;
@@ -34,11 +43,31 @@ bool readDictionaryFromFile(Dictionary * dic, char * fileName) {
   return false;
 }
 
-bool followDictionary(Dictionary * dict, char * s, BaseType * index) {
+bool followDictionary(Dict * dict, char * s, BaseType * index) {
   std::cout<<"Following Dict - '" << s << "' index: " << (*index) << std::endl;
-  bool rc = dict->Follow(s, index);
+  bool rc = dict->dict->Follow(s, index);
   std::cout<<"Following Dict + " << rc << " new index: " << (*index) << std::endl;
   return rc;
+}
+
+void startCompleter(Dict * dict, BaseType index) {
+  dict->comp->Start(index);
+}
+
+bool nextCompleter(Dict * dict) {
+  return dict->comp->Next();
+}
+
+const char * keyCompleter(Dict * dict) {
+  return dict->comp->key();
+}
+
+SizeType lengthCompleter(Dict * dict) {
+  return dict->comp->length();
+}
+
+ValueType valueCompleter(Dict * dict) {
+  return dict->comp->value();
 }
 
 #ifndef __cplusplus

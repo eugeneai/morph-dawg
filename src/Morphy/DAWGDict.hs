@@ -11,10 +11,10 @@ module Morphy.DAWGDict
 
 import Foreign.Ptr (Ptr, FunPtr, nullPtr)
 import Foreign.ForeignPtr (ForeignPtr, newForeignPtr, withForeignPtr)
-import Foreign.C.String (CString, withCString)
+import Foreign.C.String (CString, withCString, peekCString)
 import Foreign.C.Types (CInt, CUInt)
 import qualified Data.ByteString.Lazy.UTF8 as U8
-import Foreign.Marshal.Alloc (alloca)
+import Foreign.Marshal.Alloc (alloca, allocaBytes)
 import Foreign.Storable (peek, poke)
 import System.IO.Unsafe (unsafePerformIO)
 import GHC.IO.Encoding.Types (TextEncoding)
@@ -35,6 +35,19 @@ foreign import ccall unsafe "hsdawgdic.h readDictionaryFromFile"
    _readDictionaryFromFile :: Ptr DictionaryClass -> CString -> IO Int
 foreign import ccall unsafe "hsdawgdic.h followDictionary"
    _followDictionary :: Ptr DictionaryClass -> CString -> Ptr CUInt -> IO Int
+-- foreign import ccall unsafe "hsdawgdic.h valueDictionary"
+--   _valueDictionary :: Ptr DictionaryClass -> Int -> CString -> Int -> IO Int
+foreign import ccall unsafe "hsdawgdic.h startCompleter"
+   _startCompleter :: Ptr DictionaryClass -> Int -> IO ()
+foreign import ccall unsafe "hsdawgdic.h nextCompleter"
+   _nextCompleter :: Ptr DictionaryClass -> IO ()
+foreign import ccall unsafe "hsdawgdic.h keyCompleter"
+   _keyCompleter :: Ptr DictionaryClass -> IO (CString)
+foreign import ccall unsafe "hsdawgdic.h lengthCompleter"
+   _lengthCompleter :: Ptr DictionaryClass -> IO (Int)
+foreign import ccall unsafe "hsdawgdic.h valueCompleter"
+   _valueCompleter :: Ptr DictionaryClass -> IO (Int)
+
 
 newDictionary :: IO Dictionary
 newDictionary = do
@@ -83,7 +96,22 @@ valueDictionary' :: Dictionary -> Int -> IO (Maybe BLU.ByteString)
 valueDictionary' dict index = do
   withDictionaryPtr dict
     (\dictPtr ->
-        return . Just . BLU.fromString $ "TestData")
+        go dictPtr index)
+  where
+    go :: Ptr DictionaryClass -> Int -> IO (Maybe BLU.ByteString)
+    go dictPtr index = do
+      let maxSize = 2048
+      allocaBytes maxSize
+        (\ptr -> do
+            rc <- _valueDictionary dictPtr index ptr maxSize
+            if rc /= 0
+              then do
+                val <- peekCString ptr
+                return . Just . BLU.fromString $ val
+              else return Nothing)
+
+
+-- return . Just . BLU.fromString $
 
 valueDictionary :: Dictionary -> Int -> Maybe BLU.ByteString
 valueDictionary dict index = unsafePerformIO $ valueDictionary' dict index
