@@ -20,7 +20,11 @@ import System.IO.Unsafe (unsafePerformIO)
 import GHC.IO.Encoding.Types (TextEncoding)
 import System.IO (utf8)
 import qualified GHC.Foreign as GF
+import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.UTF8 as BLU
+import Data.List.Split (splitOn)
+import Data.ByteString.Unsafe (unsafePackMallocCStringLen, unsafePackCStringLen)
+import qualified GHC.Word as GW
 
 data DictionaryClass
 
@@ -92,30 +96,38 @@ followDictionary' dict str index = do
 followDictionary :: Dictionary -> String -> Int -> Maybe Int
 followDictionary dict str index = unsafePerformIO $ followDictionary' dict str index
 
-valueDictionary'' :: Ptr DictionaryClass -> Int -> CString -> Int -> IO [(String, Int)]
-valueDictionary'' dictPtr index strPtr strSize = do
+valueDictionary'' :: Ptr DictionaryClass -> Int -> CString -> Int -> (BLU.ByteString -> a) -> IO [(String, a)]
+valueDictionary'' dictPtr index strPtr strSize f = do
   _startCompleter dictPtr index
   go
   where
-    go :: IO ([(String, Int)])
     go = do
       rc <- _nextCompleter dictPtr
       if rc /= (0::Int)
         then do
           _keyCompleter dictPtr strPtr strSize
           len <- _lengthCompleter dictPtr
-          str <- GF.peekCStringLen utf8 (strPtr, len)
-          val <- _valueCompleter dictPtr
-          let x = (str, val)
-          xs <- go
-          return (x:xs)
+          str <- unsafePackCStringLen (strPtr, len) -- ByteString
+          let lstr = BL.fromStrict str  # TODO: Wrong Split, Encoding
+              suffix_ = BL.takeWhile divF $ lstr
+              val64_ = BL.tail . BL.dropWhile divF $ lstr
+          case (suffix_, val64_) of
+            (suffix, val64) -> do
+              -- let x = ((BLU.toString suffix)::String, f val64)
+              let x = ((BLU.toString lstr)::String, f val64)
+              xs <- go
+              return (x:xs)
+            _ -> return []
         else
           return []
+    divChar = '\x01' :: Char -- GW.Word8
+    divF :: GW.Word8 -> Bool
+    divF x = divChar /= '\01' -- 1 -- (1::GW.Word8)
 
 
 
-valueDictionary' :: Dictionary -> Int -> IO [(String, Int)]
-valueDictionary' dict index = do
+valueDictionary' :: Dictionary -> Int -> (BLU.ByteString -> a) -> IO [(String, a)]
+valueDictionary' dict index f = do
   withDictionaryPtr dict
     (\dictPtr ->
         go dictPtr index)
@@ -124,13 +136,12 @@ valueDictionary' dict index = do
       let maxSize = 2048
       allocaBytes maxSize
         (\ptr -> do
-            valueDictionary'' dictPtr index ptr maxSize)
-
+            valueDictionary'' dictPtr index ptr maxSize f)
 
 -- return . Just . BLU.fromString $
 
-valueDictionary :: Dictionary -> Int -> [(String, Int)]
-valueDictionary dict index = unsafePerformIO $ valueDictionary' dict index
+valueDictionary :: Dictionary -> Int -> (BLU.ByteString -> a) -> [(String, a)]
+valueDictionary dict index f = unsafePerformIO $ valueDictionary' dict index f
 
 
 -- freeDictionary :: Dictionary -> IO ()

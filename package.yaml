@@ -39,6 +39,7 @@ dependencies:
 - utf8-string
 - with-utf8
 - bytestring
+- split
 
 ghc-options:
 - -Wall

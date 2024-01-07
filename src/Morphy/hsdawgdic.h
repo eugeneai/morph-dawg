@@ -11,6 +11,7 @@ struct Dict {
   Dictionary * dict;
   Guide * guide;
   Completer * comp;
+  bool setUp = false;
 };
 
 extern "C" Dict * newDictionary();

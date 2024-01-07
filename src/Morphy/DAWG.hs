@@ -117,8 +117,8 @@ follow dawg str index =
   in
     [(str, followDictionary d str index)]
 
-lookupData :: DAWG -> String -> [(String, [(String, Int)])]
-lookupData dawg str =
+lookupData :: DAWG -> String -> (BLU.ByteString -> a) -> [(String, [(String, a)])]
+lookupData dawg str f =
   let ls = follow dawg str 0
   in
     map go ls
@@ -129,11 +129,11 @@ lookupData dawg str =
       in
         case index of
           Nothing -> (word, [])
-          Just idx -> (word, valueDictionary d idx)
+          Just idx -> (word, valueDictionary d idx f)
 
-putTuplesLn :: [(String, [(String, Int)])] -> IO ()
+putTuplesLn :: (Show a) => [(String, [(String, a)])] -> IO ()
 putTuplesLn xs = do
-  putStr "["
+  putStr " ["
   putTuples' xs
   putStr "]\n"
   where
@@ -146,8 +146,17 @@ putTuplesLn xs = do
       putTuples' (y:xs)
     pt x = do
       putStr . fst $ x
-      putStr "=>"
-      putStr . show . snd $ x
+      putStr "=>["
+      ps . snd $ x
+      putStr "]"
+    ps [] = return ()
+    ps ((word, idx):xs) = do
+      putStr word
+      putStr "->"
+      putStr . show $ idx
+      putStr ", "
+      ps xs
+
 
 
 

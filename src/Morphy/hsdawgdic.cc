@@ -14,8 +14,6 @@ Dict * newDictionary() {
   dict->dict = new Dictionary();
   dict->guide = new Guide();
   dict->comp = new Completer();
-  dict->comp->set_dic(*(dict->dict));
-  dict->comp->set_guide(*(dict->guide));
   return dict;
 }
 
@@ -34,7 +32,18 @@ bool readDictionaryFromFile(Dict * dict, char * fileName) {
   if (fb.open(fileName, std::ios::in)) {
     std::istream input(&fb);
     std::cerr << "Info: Opened '" << fileName << "' file.\n";
-    bool rc = dict->dict->Read(&input);
+    bool rc1 = dict->dict->Read(&input);
+    bool rc = rc1;
+    if (!rc1) {
+      dict->dict->Clear();
+    } else {
+      bool rc2 = dict->guide->Read(&input);
+      rc = rc && rc2;
+      if(!rc2) {
+        dict->guide->Clear();
+        dict->dict->Clear();
+      }
+    }
     fb.close();
     if (rc) std::cerr << "Info: Read successfully '" << fileName << "' file.\n";
     return rc;
@@ -51,7 +60,15 @@ bool followDictionary(Dict * dict, char * s, BaseType * index) {
 }
 
 void startCompleter(Dict * dict, BaseType index) {
+
   std::cout<<"Start Comp - index: " << index << std::endl;
+
+  if (! dict->setUp) {
+    dict->comp->set_dic(*(dict->dict));
+    dict->comp->set_guide(*(dict->guide));
+    dict->setUp = true;
+  };
+
   dict->comp->Start(index);
 }
 
@@ -63,7 +80,7 @@ bool nextCompleter(Dict * dict) {
 
 void keyCompleter(Dict * dict, char * s, BaseType maxSize) {
   const char * k = dict->comp->key();
-  std::cout<<"Key Comp + key: " << k << std::endl;
+  std::cout<<"Key Comp + key:|" << k << "|" << std::endl;
   strncpy(s, k, maxSize);
 }
 
@@ -75,7 +92,7 @@ SizeType lengthCompleter(Dict * dict) {
 
 ValueType valueCompleter(Dict * dict) {
   ValueType v = dict->comp->value();
-  std::cout<<"Value Comp + value: " << v << std::endl;
+  std::cout<<"Value Comp + value:|" << v << "|" << std::endl;
   return v;
 }
 

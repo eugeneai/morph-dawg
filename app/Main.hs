@@ -26,7 +26,8 @@ main = withUtf8 $ do
   putStrLn $ show testVal
   where
     f word =
-      let idx = lookupData dawg word
+      let idx = lookupData dawg word cnv
       in idx
     dawg = fromFile "corpora/ru/words.dawg"
-    idxs = concat $ map f ["стали", "стали", "стали", "сталь", "встали", "мама", "я", "яя", "яяя", "яяяя", "яяяяя"]
+    idxs = concat $ map f ["стали", "стали", "стали", "сталь", "встали", "мама", "машина"]
+    cnv x = x

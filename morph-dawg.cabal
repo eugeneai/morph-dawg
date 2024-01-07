@@ -104,6 +104,7 @@ library
     , base-compat
     , bytestring
     , containers
+    , split
     , text >=2.0.0 && <3
     , utf8-string
     , with-utf8
@@ -126,6 +127,7 @@ executable morph-dawg-exe
     , bytestring
     , containers
     , morph-dawg
+    , split
     , text >=2.0.0 && <3
     , utf8-string
     , with-utf8
@@ -149,6 +151,7 @@ test-suite morph-dawg-test
     , bytestring
     , containers
     , morph-dawg
+    , split
     , text >=2.0.0 && <3
     , utf8-string
     , with-utf8
