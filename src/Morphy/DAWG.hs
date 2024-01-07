@@ -9,6 +9,7 @@ module Morphy.DAWG
     DAWG
   , fromFile
   , follow
+  , lookupData
   , putTuplesLn
   -- , freeDawg
   ) where
@@ -44,15 +45,18 @@ import Prelude.Compat
       snd,
       return)
 import Data.String
-import Data.Set as S
+import qualified Data.Set as S
 import Morphy.DAWGDict (
   Dictionary
   , newDictionary
   , readDictionaryFromFile
   , followDictionary
+  , valueDictionary
   )
 
 import System.IO.Unsafe (unsafePerformIO)
+import qualified Data.ByteString.Lazy.UTF8 as BLU
+
 
 data Tag = BAD
   | POST  | NOUN  | ADJF  | ADJS  | COMP  | VERB  | INFN  | PRTF  | PRTS
@@ -113,7 +117,21 @@ follow dawg str index =
   in
     [(str, followDictionary d str index)]
 
-putTuplesLn :: [(String, Maybe Int)] -> IO ()
+lookupData :: DAWG -> String -> [(String, Maybe BLU.ByteString)]
+lookupData dawg str =
+  let ls = follow dawg str 0
+  in
+    map go ls
+  where
+    go (word, index) =
+      let
+        d = dict dawg
+      in
+        case index of
+          Nothing -> (word, Nothing)
+          Just idx -> (word, valueDictionary d idx)
+
+putTuplesLn :: (Show a) => [(String, Maybe a)] -> IO ()
 putTuplesLn xs = do
   putStr "["
   putTuples' xs

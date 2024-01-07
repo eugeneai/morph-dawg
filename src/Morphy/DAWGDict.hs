@@ -5,6 +5,7 @@ module Morphy.DAWGDict
   , newDictionary
   , readDictionaryFromFile
   , followDictionary
+  , valueDictionary
   )
   where
 
@@ -19,6 +20,7 @@ import System.IO.Unsafe (unsafePerformIO)
 import GHC.IO.Encoding.Types (TextEncoding)
 import System.IO (utf8)
 import qualified GHC.Foreign as GF
+import qualified Data.ByteString.Lazy.UTF8 as BLU
 
 data DictionaryClass
 
@@ -76,6 +78,16 @@ followDictionary' dict str index = do
 
 followDictionary :: Dictionary -> String -> Int -> Maybe Int
 followDictionary dict str index = unsafePerformIO $ followDictionary' dict str index
+
+valueDictionary' :: Dictionary -> Int -> IO (Maybe BLU.ByteString)
+valueDictionary' dict index = do
+  withDictionaryPtr dict
+    (\dictPtr ->
+        return . Just . BLU.fromString $ "TestData")
+
+valueDictionary :: Dictionary -> Int -> Maybe BLU.ByteString
+valueDictionary dict index = unsafePerformIO $ valueDictionary' dict index
+
 
 -- freeDictionary :: Dictionary -> IO ()
 -- freeDictionary dict = do
