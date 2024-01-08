@@ -3,7 +3,7 @@ module Main (main) where
 import Morphy ( Parse, morphParse )
 import Morphy.DAWG
   (
-    fromFile
+    fromDir
   , follow
   , lookupData
   , putTuplesLn
@@ -26,7 +26,7 @@ testVal = morphParse $ T.pack "стали"
 
 main :: IO ()
 main = withUtf8 $ do
-  putStrLn $ show dawg
+  -- putStrLn $ show dawg
   putTuplesLn idxs
   putStrLn ""
   putStrLn $ show testVal
@@ -34,6 +34,6 @@ main = withUtf8 $ do
     f word =
       let idx = lookupData dawg word cnv
       in idx
-    dawg = fromFile "corpora/ru/words.dawg"
+    dawg = fromDir "corpora/ru"
     idxs = concat $ map f ["стали", "стали", "стали", "сталь", "встали", "мама", "машина"]
     cnv x = decodeBase64Lenient x

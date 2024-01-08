@@ -85,8 +85,8 @@ library
   exposed-modules:
       Morphy
       Morphy.DAWG
-  other-modules:
       Morphy.DAWGDict
+      Morphy.Paradigm
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
@@ -100,14 +100,18 @@ library
   extra-libraries:
       stdc++
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , base-compat
     , base64
+    , binary
+    , byteslice
     , bytestring
     , containers
     , split
     , text >=2.0.0 && <3
     , utf8-string
+    , vector
     , with-utf8
   default-language: Haskell2010
 
@@ -123,15 +127,19 @@ executable morph-dawg-exe
   extra-libraries:
       stdc++
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , base-compat
     , base64
+    , binary
+    , byteslice
     , bytestring
     , containers
     , morph-dawg
     , split
     , text >=2.0.0 && <3
     , utf8-string
+    , vector
     , with-utf8
   default-language: Haskell2010
 
@@ -148,14 +156,18 @@ test-suite morph-dawg-test
   extra-libraries:
       stdc++
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , base-compat
     , base64
+    , binary
+    , byteslice
     , bytestring
     , containers
     , morph-dawg
     , split
     , text >=2.0.0 && <3
     , utf8-string
+    , vector
     , with-utf8
   default-language: Haskell2010

@@ -7,7 +7,7 @@
 module Morphy.DAWG
   (
     DAWG
-  , fromFile
+  , fromDir
   , follow
   , lookupData
   , putTuplesLn
@@ -58,6 +58,7 @@ import Morphy.DAWGDict (
 
 import System.IO.Unsafe (unsafePerformIO)
 import qualified Data.ByteString.Lazy.UTF8 as BLU
+import qualified Morphy.Paradigm as P
 
 
 data Tag = BAD
@@ -101,17 +102,29 @@ morphParse word = [
   , Parse {word=word, tag=S.fromList [NOUN], normalForm=word, score=0.5}
   ]
 
-newtype DAWG = DAWG { dict::Dictionary }
+data DAWG = DAWG {
+    dict  :: !Dictionary
+  , paras :: !P.Paradigms
+  }
   deriving Show
 
-fromFile :: String -> DAWG
-fromFile fn = unsafePerformIO $ createAndOpen fn
+fromDir :: String -> DAWG
+fromDir dirName =
+  let
+    dict = dictFromFile (dirName ++ "/" ++ "words.dawg")
+    paras = P.fromFile (dirName ++ "/" ++ "paradigms.array")
+  in
+    DAWG {dict=dict, paras=paras}
+
+
+dictFromFile :: String -> Dictionary
+dictFromFile fn = unsafePerformIO $ createAndOpen fn
   where
-    createAndOpen :: String -> IO DAWG
+    createAndOpen :: String -> IO Dictionary
     createAndOpen fn = do
       dict <- newDictionary
       readDictionaryFromFile dict fn
-      return . DAWG $ dict
+      return dict
 
 follow :: DAWG -> String -> Int -> [(String, Maybe Int)]
 follow dawg str index =

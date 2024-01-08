@@ -39,8 +39,12 @@ dependencies:
 - utf8-string
 - with-utf8
 - bytestring
+- byteslice
 - split
 - base64
+- vector
+- array
+- binary
 
 ghc-options:
 - -Wall
@@ -58,6 +62,8 @@ library:
   exposed-modules:
     - Morphy
     - Morphy.DAWG
+    - Morphy.DAWGDict
+    - Morphy.Paradigm
   cxx-sources:
     - src/Morphy/*.cc
   cxx-options:
