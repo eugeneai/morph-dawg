@@ -45,6 +45,8 @@ dependencies:
 - vector
 - array
 - binary
+- aeson
+- extra
 
 ghc-options:
 - -Wall

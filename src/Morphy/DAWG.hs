@@ -45,6 +45,7 @@ import Prelude.Compat
       fst,
       snd,
       fromIntegral,
+      div,
       return)
 import Data.String
 import qualified Data.Set as S
@@ -63,31 +64,15 @@ import System.IO.Unsafe (unsafePerformIO)
 import qualified Data.ByteString.Lazy.UTF8 as BLU
 import qualified Data.ByteString as BL
 import qualified Morphy.Paradigm as P
+import qualified Morphy.Grammeme as Gr
 import qualified Data.Binary.Get as G
 import Data.ByteString.Base64
-
-
-data Tag = BAD
-  | POST  | NOUN  | ADJF  | ADJS  | COMP  | VERB  | INFN  | PRTF  | PRTS
-  | GRND  | NUMR  | ADVB  | NPRO  | PRED  | PREP  | CONJ  | PRCL  | INTJ  | ANIM
-  | INAN  | GNDR  | MASC  | FEMN  | NEUT  | MS_F  | NMBR  | SING  | PLUR  | SGTM
-  | PLTM  | FIXD  | CASE  | NOMN  | GENT  | DATV  | ACCS  | ABLT  | LOCT  | VOCT
-  | GEN1  | GEN2  | ACC2  | LOC1  | LOC2  | ABBR  | NAME  | SURN  | PATR  | GEOX
-  | ORGN  | TRAD  | SUBX  | SUPR  | QUAL  | APRO  | ANUM  | POSS  | V_EY  | V_OY
-  | CMP2  | V_EJ  | ASPC  | PERF  | IMPF  | TRNS  | TRAN  | INTR  | IMPE  | IMPX
-  | MULT  | REFL  | PERS  | PER1  | PER2  | PER3  | TENS  | PRES  | PAST  | FUTR
-  | MOOD  | INDC  | IMPR  | INVL  | INCL  | EXCL  | VOIC  | ACTV  | PSSV  | INFR
-  | SLNG  | ARCH  | LITR  | ERRO  | DIST  | QUES  | DMNS  | PRNT  | V_BE  | V_EN
-  | V_IE  | V_BI  | FIMP  | PRDX  | COUN  | COLL  | V_SH  | AF_P  | INMX  | VPRE
-  | ANPH  | INIT  | ADJX  | HYPO  | LATN  | UNKN
-  deriving (Show, Eq, Ord)
-
 
 
 data Parse = Parse
   {
     word :: T.Text
-  , tag :: S.Set Tag
+  , tag :: S.Set Gr.GramTag
   , normalForm :: T.Text
   , score :: Float
   -- , methodStack ::
@@ -104,13 +89,14 @@ instance Show Parse where
 
 morphParse :: T.Text -> [Parse]
 morphParse word = [
-  Parse {word=word, tag=S.fromList [NOUN], normalForm=word, score=1.0}
-  , Parse {word=word, tag=S.fromList [NOUN], normalForm=word, score=0.5}
+  Parse {word=word, tag=S.fromList [Gr.NOUN], normalForm=word, score=1.0}
+  , Parse {word=word, tag=S.fromList [Gr.NOUN], normalForm=word, score=0.5}
   ]
 
 data DAWG = DAWG {
     dict  :: !Dictionary
   , paras :: !P.Paradigms
+  , grams :: !Gr.Grammemes
   }
   deriving Show
 
@@ -119,8 +105,9 @@ fromDir dirName =
   let
     dict = dictFromFile (dirName ++ "/" ++ "words.dawg")
     paras = P.fromFile (dirName ++ "/" ++ "paradigms.array")
+    grams = Gr.fromFile (dirName ++ "/" ++ "grammemes.json")
   in
-    DAWG {dict=dict, paras=paras}
+    DAWG {dict=dict, paras=paras, grams=grams}
 
 
 dictFromFile :: String -> Dictionary
@@ -152,7 +139,7 @@ lookupData dawg str f =
           Nothing -> (word, [])
           Just idx -> (word, valueDictionary d idx f)
 
-lookupParadigms' :: DAWG -> String -> [(String, [(String, (P.Para, Int))])]
+lookupParadigms' :: DAWG -> String -> [(String, [(String, (Int, Int))])]
 lookupParadigms' dawg key =
   let
     idxs = lookupData dawg key f
@@ -166,8 +153,10 @@ lookupParadigms' dawg key =
         b2 = BLU.drop 2 $ dsl
         (pn, idx) = (fi b1, fi b2)
         pg = paras dawg V.! pn
+        tag_offset = (V.length pg) `div` 3
+        tag_id = pg V.! (tag_offset+idx)
       in
-        (pg, idx)
+        (fromIntegral tag_id, idx)
 
     fi b = fromIntegral $ G.runGet getWord16 b
     getWord16 = do G.getWord16be

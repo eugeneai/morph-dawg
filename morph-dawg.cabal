@@ -87,6 +87,8 @@ library
       Morphy.DAWG
       Morphy.DAWGDict
       Morphy.Paradigm
+  other-modules:
+      Morphy.Grammeme
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
@@ -100,7 +102,8 @@ library
   extra-libraries:
       stdc++
   build-depends:
-      array
+      aeson
+    , array
     , base >=4.7 && <5
     , base-compat
     , base64
@@ -108,6 +111,7 @@ library
     , byteslice
     , bytestring
     , containers
+    , extra
     , split
     , text >=2.0.0 && <3
     , utf8-string
@@ -127,7 +131,8 @@ executable morph-dawg-exe
   extra-libraries:
       stdc++
   build-depends:
-      array
+      aeson
+    , array
     , base >=4.7 && <5
     , base-compat
     , base64
@@ -135,6 +140,7 @@ executable morph-dawg-exe
     , byteslice
     , bytestring
     , containers
+    , extra
     , morph-dawg
     , split
     , text >=2.0.0 && <3
@@ -156,7 +162,8 @@ test-suite morph-dawg-test
   extra-libraries:
       stdc++
   build-depends:
-      array
+      aeson
+    , array
     , base >=4.7 && <5
     , base-compat
     , base64
@@ -164,6 +171,7 @@ test-suite morph-dawg-test
     , byteslice
     , bytestring
     , containers
+    , extra
     , morph-dawg
     , split
     , text >=2.0.0 && <3
