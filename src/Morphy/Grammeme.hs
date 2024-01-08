@@ -65,9 +65,9 @@ fromFile fn = unsafePerformIO $ gen
           case arr of
             Array lst -> do
               let gls = V.map f lst
-              print ">>>"
+              -- print ">>>"
               -- print . V.filter bd $ gls
-              print . V.length $ gls
+              -- print . V.length $ gls
               return gls
             _ -> return V.empty
         _ -> return V.empty
