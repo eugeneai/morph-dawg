@@ -89,7 +89,7 @@ data Parse = Parse
 
 data IntTuple a = IntTuple {key::String, val::Maybe a} deriving Eq
 
-instance (Show a) => Show (IntTuple a) where
+instance (Show a) => Show (IntTuple a)  where
   show t = "{" ++ key t ++ "=>" ++ (show . val $ t) ++ "}"
 
 instance Show Parse where

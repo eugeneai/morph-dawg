@@ -24,15 +24,16 @@ fromFile fn = unsafePerformIO $ gen fn
       cts <- BL.readFile $ fn
       let ct = cts
       let pslen = G.runGet getWord16 ct
-      print pslen
+      print $ "PSLEN:" ++ show pslen
       V.generateM (fromIntegral pslen) $ pgens ct
 
     getWord16 :: G.Get Word16
     getWord16 = do
       G.getWord16le
 
-    pgens ct _ = do
+    pgens ct i = do
       let plen = G.runGet getWord16 ct
+      print $ show i ++ "-th LEN:" ++ show plen
       V.generateM (fromIntegral plen) (genp ct)
 
     genp ct _ = do

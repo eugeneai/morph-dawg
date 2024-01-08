@@ -35,5 +35,6 @@ main = withUtf8 $ do
       let idx = lookupData dawg word cnv
       in idx
     dawg = fromDir "corpora/ru"
-    idxs = concat $ map f ["стали", "стали", "стали", "сталь", "встали", "мама", "машина"]
+    -- idxs = concat $ map f ["стали", "стали", "стали", "сталь", "встали", "мама", "машина"]
+    idxs = concat $ map f ["стали"]
     cnv x = decodeBase64Lenient x

@@ -8,9 +8,10 @@
 
 using namespace dawgdic;
 
+#define DEBUG false
 
 Dict * newDictionary() {
-  std::cout<<"Creating Dict\n";
+  if (DEBUG) std::cout<<"Creating Dict\n";
   Dict * dict = new Dict();
   dict->dict = new Dictionary();
   dict->guide = new Guide();
@@ -19,7 +20,7 @@ Dict * newDictionary() {
 }
 
 void freeDictionary(Dict * dict) {
-  std::cout<<"Releasing Dict\n";
+  if (DEBUG) std::cout<<"Releasing Dict\n";
   dict->guide->Clear();
   dict->dict->Clear();
   delete dict->comp;
@@ -32,7 +33,7 @@ bool readDictionaryFromFile(Dict * dict, char * fileName) {
   std::filebuf fb;
   if (fb.open(fileName, std::ios::in)) {
     std::istream input(&fb);
-    std::cerr << "Info: Opened '" << fileName << "' file.\n";
+    if (DEBUG) std::cerr << "Info: Opened '" << fileName << "' file.\n";
     bool rc1 = dict->dict->Read(&input);
     bool rc = rc1;
     if (!rc1) {
@@ -46,7 +47,7 @@ bool readDictionaryFromFile(Dict * dict, char * fileName) {
       }
     }
     fb.close();
-    if (rc) std::cerr << "Info: Read successfully '" << fileName << "' file.\n";
+    if (DEBUG) if (rc) std::cerr << "Info: Read successfully '" << fileName << "' file.\n";
     return rc;
   }
   std::cerr << "FATAL: Cannot open '" << fileName << "' file.\n";
@@ -54,15 +55,15 @@ bool readDictionaryFromFile(Dict * dict, char * fileName) {
 }
 
 bool followDictionary(Dict * dict, char * s, BaseType * index) {
-  std::cout<<"Following Dict - '" << s << "' index: " << (*index) << std::endl;
+  if (DEBUG) std::cout<<"Following Dict - '" << s << "' index: " << (*index) << std::endl;
   bool rc = dict->dict->Follow(s, index);
-  std::cout<<"Following Dict + " << rc << " new index: " << (*index) << std::endl;
+  if (DEBUG) std::cout<<"Following Dict + " << rc << " new index: " << (*index) << std::endl;
   return rc;
 }
 
 void startCompleter(Dict * dict, BaseType index) {
 
-  std::cout<<"Start Comp - index: " << index << std::endl;
+  if (DEBUG) std::cout<<"Start Comp - index: " << index << std::endl;
 
   if (! dict->setUp) {
     dict->comp->set_dic(*(dict->dict));
@@ -75,13 +76,13 @@ void startCompleter(Dict * dict, BaseType index) {
 
 bool nextCompleter(Dict * dict) {
   auto rc = dict->comp->Next();
-  std::cout<<"Next Comp + bool: " << rc << std::endl;
+  if (DEBUG) std::cout<<"Next Comp + bool: " << rc << std::endl;
   return rc;
 }
 
 void keyCompleter(Dict * dict, char * s, BaseType maxSize) {
   const char * k = dict->comp->key();
-  std::cout<<"Key Comp + key:|" << k << "|" << std::endl;
+  if (DEBUG) std::cout<<"Key Comp + key:|" << k << "|" << std::endl;
   strncpy(s, k, maxSize);
 }
 
@@ -126,18 +127,18 @@ void keyValueCompleter(Dict * dict, char * k, char * v, BaseType maxSize) {
     p++;
     c++;
   }
-  std::cout<<"Key Comp + key:|" << k << "| val:|" << v << "|" << std::endl;
+  if (DEBUG) std::cout<<"Key Comp + key:|" << k << "| val:|" << v << "|" << std::endl;
 }
 
 SizeType lengthCompleter(Dict * dict) {
   auto l = dict->comp->length();
-  std::cout<<"Length Comp + length: " << l << std::endl;
+  if (DEBUG) std::cout<<"Length Comp + length: " << l << std::endl;
   return l;
 }
 
 ValueType valueCompleter(Dict * dict) {
   ValueType v = dict->comp->value();
-  std::cout<<"Value Comp + value:|" << v << "|" << std::endl;
+  if (DEBUG) std::cout<<"Value Comp + value:|" << v << "|" << std::endl;
   return v;
 }
 
