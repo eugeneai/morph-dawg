@@ -6,6 +6,7 @@ import Morphy.DAWG
     fromDir
   , follow
   , lookupData
+  , lookupParadigms
   , putTuplesLn
   )
 
@@ -32,7 +33,7 @@ main = withUtf8 $ do
   putStrLn $ show testVal
   where
     f word =
-      let idx = lookupData dawg word cnv
+      let idx = lookupParadigms dawg word
       in idx
     dawg = fromDir "corpora/ru"
     -- idxs = concat $ map f ["стали", "стали", "стали", "сталь", "встали", "мама", "машина"]

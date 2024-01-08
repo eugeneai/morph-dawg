@@ -8,7 +8,7 @@ module Morphy.Paradigm
 import qualified Data.Vector as V
 import Data.Word (Word16)
 import System.IO
--- import qualified Data.ByteString as BS
+import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.Binary.Get as G
 import System.IO.Unsafe (unsafePerformIO)
@@ -21,20 +21,28 @@ fromFile :: String -> Paradigms
 fromFile fn = unsafePerformIO $ gen fn
   where
     gen fn = do
-      cts <- BL.readFile $ fn
-      let ct = cts
-      let pslen = G.runGet getWord16 ct
-      print $ "PSLEN:" ++ show pslen
-      V.generateM (fromIntegral pslen) $ pgens ct
+      h <- openFile fn ReadMode
+      ctbs <- BS.hGetSome h 2
+      let gslen = G.runGet getWord16 $ BL.fromStrict ctbs
+      let rc = V.generateM (fromIntegral gslen) $ pgens h
+--      p <- hTell h
+--      s <- hFileSize h
+--      putStr "\npos:"
+--      putStrLn . show $ p
+--      putStr "size:"
+--      putStrLn . show $ s
+      rc
 
     getWord16 :: G.Get Word16
     getWord16 = do
       G.getWord16le
 
-    pgens ct i = do
-      let plen = G.runGet getWord16 ct
-      print $ show i ++ "-th LEN:" ++ show plen
-      V.generateM (fromIntegral plen) (genp ct)
+    pgens h i = do
+      bs <- BS.hGetSome h 2
+      let plen = G.runGet getWord16 $ BL.fromStrict bs
+      -- print $ show i ++ "-th LEN:" ++ show plen
+      V.generateM (fromIntegral plen) (genp h)
 
-    genp ct _ = do
-      return $ G.runGet getWord16 ct
+    genp h _ = do
+      bs <- BS.hGetSome h 2
+      return $ G.runGet getWord16 $ BL.fromStrict bs

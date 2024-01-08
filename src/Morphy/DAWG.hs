@@ -10,6 +10,7 @@ module Morphy.DAWG
   , fromDir
   , follow
   , lookupData
+  , lookupParadigms
   , putTuplesLn
   -- , freeDawg
   ) where
@@ -43,10 +44,12 @@ import Prelude.Compat
       putStrLn,
       fst,
       snd,
+      fromIntegral,
       return)
 import Data.String
 import qualified Data.Set as S
 import qualified Data.ByteString as BS
+import qualified Data.Vector as V
 
 import Morphy.DAWGDict (
   Dictionary
@@ -58,7 +61,10 @@ import Morphy.DAWGDict (
 
 import System.IO.Unsafe (unsafePerformIO)
 import qualified Data.ByteString.Lazy.UTF8 as BLU
+import qualified Data.ByteString as BL
 import qualified Morphy.Paradigm as P
+import qualified Data.Binary.Get as G
+import Data.ByteString.Base64
 
 
 data Tag = BAD
@@ -145,6 +151,28 @@ lookupData dawg str f =
         case index of
           Nothing -> (word, [])
           Just idx -> (word, valueDictionary d idx f)
+
+lookupParadigms' :: DAWG -> String -> [(String, [(String, (P.Para, Int))])]
+lookupParadigms' dawg key =
+  let
+    idxs = lookupData dawg key f
+  in
+    idxs
+  where
+    f bs =
+      let
+        dsl = BL.fromStrict . decodeBase64Lenient $ bs
+        b1 = BLU.take 2 $ dsl
+        b2 = BLU.drop 2 $ dsl
+        (pn, idx) = (fi b1, fi b2)
+        pg = paras dawg V.! pn
+      in
+        (pg, idx)
+
+    fi b = fromIntegral $ G.runGet getWord16 b
+    getWord16 = do G.getWord16be
+
+lookupParadigms = lookupParadigms'
 
 putTuplesLn :: (Show a) => [(String, [(String, a)])] -> IO ()
 putTuplesLn xs = do
