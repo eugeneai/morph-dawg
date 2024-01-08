@@ -46,6 +46,8 @@ import Prelude.Compat
       return)
 import Data.String
 import qualified Data.Set as S
+import qualified Data.ByteString as BS
+
 import Morphy.DAWGDict (
   Dictionary
   , newDictionary
@@ -117,7 +119,7 @@ follow dawg str index =
   in
     [(str, followDictionary d str index)]
 
-lookupData :: DAWG -> String -> (BLU.ByteString -> a) -> [(String, [(String, a)])]
+lookupData :: DAWG -> String -> (BS.ByteString -> a) -> [(String, [(String, a)])]
 lookupData dawg str f =
   let ls = follow dawg str 0
   in

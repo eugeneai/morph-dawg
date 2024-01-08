@@ -11,6 +11,12 @@ import Morphy.DAWG
 
 import qualified Data.Text as T
 import Main.Utf8 (withUtf8)
+import Data.ByteString.Base64
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy.UTF8 as BLU
+import qualified Data.ByteString.Char8 as C8
+
+
 
 -- Test like function
 
@@ -30,4 +36,4 @@ main = withUtf8 $ do
       in idx
     dawg = fromFile "corpora/ru/words.dawg"
     idxs = concat $ map f ["стали", "стали", "стали", "сталь", "встали", "мама", "машина"]
-    cnv x = x
+    cnv x = decodeBase64Lenient x

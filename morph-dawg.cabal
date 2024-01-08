@@ -102,6 +102,7 @@ library
   build-depends:
       base >=4.7 && <5
     , base-compat
+    , base64
     , bytestring
     , containers
     , split
@@ -124,6 +125,7 @@ executable morph-dawg-exe
   build-depends:
       base >=4.7 && <5
     , base-compat
+    , base64
     , bytestring
     , containers
     , morph-dawg
@@ -148,6 +150,7 @@ test-suite morph-dawg-test
   build-depends:
       base >=4.7 && <5
     , base-compat
+    , base64
     , bytestring
     , containers
     , morph-dawg

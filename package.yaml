@@ -40,6 +40,7 @@ dependencies:
 - with-utf8
 - bytestring
 - split
+- base64
 
 ghc-options:
 - -Wall

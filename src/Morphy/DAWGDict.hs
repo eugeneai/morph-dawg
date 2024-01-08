@@ -23,6 +23,8 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy.UTF8 as BLU
 import Data.List.Split (splitOn)
+import qualified Data.ByteString.Char8 as C8
+
 import Data.ByteString.Unsafe
   (
     unsafePackMallocCStringLen
@@ -102,7 +104,7 @@ followDictionary' dict str index = do
 followDictionary :: Dictionary -> String -> Int -> Maybe Int
 followDictionary dict str index = unsafePerformIO $ followDictionary' dict str index
 
-valueDictionary'' :: Ptr DictionaryClass -> Int -> CString -> CString -> Int -> (BLU.ByteString -> a) -> IO [(String, a)]
+valueDictionary'' :: Ptr DictionaryClass -> Int -> CString -> CString -> Int -> (BS.ByteString -> a) -> IO [(String, a)]
 valueDictionary'' dictPtr index keyPtr valPtr strSize f = do
   _startCompleter dictPtr index
   go
@@ -116,7 +118,7 @@ valueDictionary'' dictPtr index keyPtr valPtr strSize f = do
           len <- _lengthCompleter dictPtr
           key <- GF.peekCString utf8 keyPtr
           val <- GF.peekCString utf8 valPtr
-          let x = (key, f . BLU.fromString $ val)
+          let x = (key, f . C8.pack $ val)
           xs <- go
           return (x:xs)
         else
@@ -127,7 +129,7 @@ valueDictionary'' dictPtr index keyPtr valPtr strSize f = do
 
 
 
-valueDictionary' :: Dictionary -> Int -> (BLU.ByteString -> a) -> IO [(String, a)]
+valueDictionary' :: Dictionary -> Int -> (BS.ByteString -> a) -> IO [(String, a)]
 valueDictionary' dict index f = do
   withDictionaryPtr dict
     (\dictPtr ->
@@ -143,7 +145,7 @@ valueDictionary' dict index f = do
 
 -- return . Just . BLU.fromString $
 
-valueDictionary :: Dictionary -> Int -> (BLU.ByteString -> a) -> [(String, a)]
+valueDictionary :: Dictionary -> Int -> (BS.ByteString -> a) -> [(String, a)]
 valueDictionary dict index f = unsafePerformIO $ valueDictionary' dict index f
 
 
