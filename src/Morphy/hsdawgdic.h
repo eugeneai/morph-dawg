@@ -23,6 +23,7 @@ extern "C" bool valueDictionary(Dict * dict, BaseType index, char * buf, BaseTyp
 extern "C" void startCompleter(Dict * dict, BaseType index);
 extern "C" bool nextCompleter(Dict * dict);
 extern "C" void keyCompleter(Dict * dict, char * s, BaseType maxSize);
+extern "C" void keyValueCompleter(Dict * dict, char * k, char * v, BaseType maxSize);
 extern "C" SizeType lengthCompleter(Dict * dict);
 extern "C" ValueType valueCompleter(Dict * dict);
 

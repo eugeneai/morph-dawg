@@ -4,6 +4,7 @@
 #include <iostream>     // std::ios, std::istream, std::cout
 #include <fstream>      // std::filebuf
 #include <string.h>
+#include <assert.h>
 
 using namespace dawgdic;
 
@@ -82,6 +83,50 @@ void keyCompleter(Dict * dict, char * s, BaseType maxSize) {
   const char * k = dict->comp->key();
   std::cout<<"Key Comp + key:|" << k << "|" << std::endl;
   strncpy(s, k, maxSize);
+}
+
+void keyValueCompleter(Dict * dict, char * k, char * v, BaseType maxSize) {
+  const char * s = dict->comp->key();
+  char * c = (char *) s;
+  BaseType m = maxSize;
+  BaseType p = 0;
+  v[0] = '\x0';
+  k[0] = '\x0';
+  assert(maxSize>0);
+  while (true) {
+    char cc = *c;
+    if (cc == '\x0') {
+      k[p] = '\x0';
+      return;
+    } else if (cc == '\x1') {
+      k[p] = '\x0';
+      p++;
+      c++;
+      break;
+    } else if (p==maxSize) {
+      k[p-1] = '\0';
+      return;
+    }
+    k[p] = cc;
+    p++;
+    c++;
+  }
+
+  p = 0;
+  while (true) {
+    char cc = *c;
+    if (cc == '\x0') {
+      v[p] = '\x0';
+      return;
+    } else if (p==maxSize) {
+      v[p-1]='\x0';
+      return;
+    }
+    v[p] = cc;
+    p++;
+    c++;
+  }
+  std::cout<<"Key Comp + key:|" << k << "| val:|" << v << "|" << std::endl;
 }
 
 SizeType lengthCompleter(Dict * dict) {

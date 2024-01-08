@@ -154,6 +154,7 @@ putTuplesLn xs = do
       putStr word
       putStr "->"
       putStr . show $ idx
+      -- putStr . show $ idx
       putStr ", "
       ps xs
 
